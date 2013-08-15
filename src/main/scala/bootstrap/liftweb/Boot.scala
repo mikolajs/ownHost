@@ -19,17 +19,19 @@ import java.sql.{ Connection, DriverManager }
 
 import pl.brosbit.model._
 
+
 object DBVendor extends ConnectionManager {
-    def newConnection(name: ConnectionIdentifier): Box[Connection] = {
-        try {
-            Class.forName("org.postgresql.Driver")
-            val dm = DriverManager.getConnection("jdbc:postgresql:ownhost", "ownhost", "ownhost456")
-            Full(dm)
-        } catch {
-            case e: Exception => e.printStackTrace; Empty
-        }
-    }
-    def releaseConnection(conn: Connection) { conn.close }
+  def newConnection(name: ConnectionIdentifier): Box[Connection] = {
+    try {
+       Class.forName("org.h2.Driver")
+      val dm = DriverManager.getConnection("jdbc:h2:ownhost")
+      Full(dm)
+    } catch {
+      case e: Exception => e.printStackTrace; Empty
+    
+  }
+  }
+  def releaseConnection(conn: Connection) { conn.close }
 }
 
 class Boot {
@@ -37,28 +39,28 @@ class Boot {
 
         DB.defineConnectionManager(DefaultConnectionIdentifier, DBVendor)
 
-        Schemifier.schemify(true, Schemifier.infoF _, Klient, Okres, Firma, Oferta, Usluga)
+        Schemifier.schemify(true, Schemifier.infoF _, User, Period, Company, Offer, Service)
 
         LiftRules.addToPackages("pl.brosbit")
         
-        if (DB.runQuery("select * from users where lastname = 'Administrator'")._2.isEmpty) {
-      val u = Klient.create
+        if (DB.runQuery("select * from klients where lastname = 'Administrator'")._2.isEmpty) {
+      val u = User.create
       u.lastName("Administrator").superUser(true).password("123qwerty").email("mail@mail.org").validated(true).save
       u.lastName("Testowy").superUser(false).password("123qwerty").email("test@mail.org").validated(true).save
         }
-        var loggedIn =  If(() => Klient.loggedIn_?, () => RedirectResponse("user_mgt/login"))
-        var isSuperUser =  If(() => Klient.loggedIn_? && 
-                Klient.currentUser.openOrThrowException("Not user").superUser.is
+        var loggedIn =  If(() => User.loggedIn_?, () => RedirectResponse("user_mgt/login"))
+        var isSuperUser =  If(() => User.loggedIn_? && 
+                User.currentUser.openOrThrowException("Not user").superUser.is
                 , () => RedirectResponse("user_mgt/login"))		
         
         val entries = List(
             Menu("Główna") / "index" >> loggedIn,
-            Menu("Główna") / "adm" / "admin" >> isSuperUser,
-            Menu("Główna") / "adm" / "company" >> isSuperUser,
-            Menu("Główna") / "adm" / "offer" >> isSuperUser,
-            Menu("Główna") / "adm" / "client" >> isSuperUser,
-            Menu("Główna") / "adm" / "service" >> isSuperUser
-        ) :::  (Klient.sitemap)
+            Menu("Edycja Admin") / "adm" / "admin" >> isSuperUser,
+            Menu("Firma") / "adm" / "company" >> isSuperUser,
+            Menu("Oferta") / "adm" / "offer" >> isSuperUser,
+            Menu("Klient") / "adm" / "client" >> isSuperUser,
+            Menu("Usługa") / "adm" / "service" >> isSuperUser
+        ) :::  (User.sitemap)
             
         LiftRules.setSiteMap(SiteMap(entries: _*))
 
@@ -74,7 +76,7 @@ class Boot {
         // Force the request to be UTF-8
         LiftRules.early.append(_.setCharacterEncoding("UTF-8"))
         
-        LiftRules.loggedInTest = Full(() => Klient.loggedIn_?)
+        LiftRules.loggedInTest = Full(() => User.loggedIn_?)
 
     }
 }

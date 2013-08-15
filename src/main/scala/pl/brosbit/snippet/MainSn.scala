@@ -15,68 +15,63 @@ import net.liftweb.http.js.JsCmds.{ SetHtml, Alert, Run}
 
 class MainSn {
 	
-    val user = Klient.currentUser.openOrThrowException("No user")
+    val user = User.currentUser.openOrThrowException("No user")
     
     def userData() = {
 
-        val user = Klient.currentUser.openOrThrowException("No user")
+        val user =User.currentUser.openOrThrowException("No user")
         var firstName = user.firstName.is
         var lastName = user.lastName.is
-        var telefon = user.telefon.is
-        var ulica = user.ulica.is
-        var miasto = user.miasto.is
-        var kod	= user.kod.is
+        var phone = user.phone.is
+        var street = user.street.is
+        var city = user.city.is
+        var houseNr = user.houseNr.is
+        var zipCode 	= user.zipCode.is
         var email = user.email.is
             
         def save() = {
-            user.firstName(firstName.trim).lastName(lastName.trim).telefon(telefon.trim).
-            ulica(ulica.trim).miasto(miasto.trim).kod(kod.trim).email(email.trim).save
+            user.firstName(firstName.trim).lastName(lastName.trim).phone(phone.trim).
+            street(street.trim).city(city.trim).zipCode(zipCode.trim).email(email.trim).
+            houseNr(houseNr.trim).save
             Run("")
         }
         
         val form = "#firstName" #> SHtml.text(firstName, firstName = _) &
         "#lastName" #> SHtml.text(lastName, lastName = _) &
-        "#telefon" #> SHtml.text(telefon, telefon = _) &
-        "#ulica" #> SHtml.text(ulica, ulica = _) &
-        "#miasto" #> SHtml.text(miasto, miasto = _) &
-        "#kod" #> SHtml.text(kod, kod = _) &
-        "#mail" #> SHtml.text(email, email = _) &
+        "#phone" #> SHtml.text(phone, phone = _) &
+        "#street" #> SHtml.text(street, street = _) &
+        "#city" #> SHtml.text(city, city = _) &
+        "#house" #> SHtml.text(houseNr, houseNr = _) &
+        "#zipCode" #> SHtml.text(zipCode, zipCode = _) &
+        "#email" #> SHtml.text(email, email = _) &
         "#saveUser" #> SHtml.ajaxSubmit("Zapisz", save) andThen SHtml.makeFormsAjax
         
         "form" #> (in => form(in))
 
     }
     
-    def test() = {
-        
-        def save(n:Klient):Any = {
-            n.save
+    def companyData() = {
+         val company  = Company.find(user.idCompany).openOr(Company.create)
+         
+        def save(com:Company):Any = {
+           println("=========================================== "+com.id.is)
+           
+           com.validate match {
+
+  case Nil => S.notice("Person is valid")
+  case errors:List[FieldError] => {println("EROR VALIDATE ");S.error(errors)  // S.error will handle this properly
+
+} 
+           }
+
+
+            com.save
+            user.idCompany(com.id.get).save
         }      
-        
-        val a = S.param("a").openOr("0")
-        val account = Klient.find(a).openOr(Klient.create)
-        val f = "input" #> account.toForm(Full("Dodaj"),save _) andThen SHtml.makeFormsAjax
+      
+        val f = "input" #> company.toForm(Full("Dodaj"),save _) andThen SHtml.makeFormsAjax
         "form" #> (in => f(in))
     }
     
-    def firma() = {
-        val idFirma = user.id_firma.is
-        if(idFirma != null && idFirma > 0) {
-            
-        }
-    }
-    
-    def oferta() = {
-        
-    }
-    
-    def okres() = {
-        
-    }
-    
-    def uslugi() = {
-        
-    }
-
 }
 
