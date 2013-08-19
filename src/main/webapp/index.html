@@ -63,16 +63,16 @@ $( "#amountTimeInfo" ).text( val );
 </ul>
 
 <div id="flyingForm">
-<form> 
-<p><input id="serviceId" /></p>
+<form class="lift:MainSn.addService"  method="POST'" > 
+<p><input id="serviceId"  style="display:none" /><input id="orderId"  style="display:none"  /></p>
 <label for="serviceKind">Usługa</label><select id="serviceKind"></select>
-<input id="amountGB"  />
+<input id="amountGB"  style="display:none"   />
 <h3>Pojemność konta: <span id="amountGBInfo"></span> GB</h3>
 <div id="sliderGB"></div>
 <h3>Okres ważności: <span id="amountTimeInfo"></span> M-cy</h3>
-<input id="amountTime" />
+<input id="amountTime"  style="display:none" />
 <div id="sliderTime"></div>
-<input id="saveService" /><input id="cancel"  type="submit" value="Anuluj" />
+<input id="saveOrder"    /><input id="cancel"  type="submit" value="Anuluj" />
 </form>
 </div>
 </article>
@@ -80,7 +80,7 @@ $( "#amountTimeInfo" ).text( val );
 <h2><a>Dane Twojej firmy:</a></h2>
 
 <form  class="lift:MainSn.companyData"  method="POST">
-<input />
+<input ><p id="nameComp"></p></input>
 </form>
 </article>
 

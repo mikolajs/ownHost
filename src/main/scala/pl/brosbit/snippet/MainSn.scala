@@ -72,10 +72,44 @@ class MainSn {
     def servicesData() = {
     	val services = Service.findAll(By(Service.idUser, user.id.is))
     	"#services" #> services.map(service => {
-    	    val offer = service.idOffer.obj.open_!
+    	    val offer = service.idOffer.obj.openOrThrowException("No offert in service!")
     	    "li" #> <li>{"%s  - pojemność %d GB - termin wygaśnięcia:  ".format(offer.name.is, service.capacity.is,  service.getExpiredTime) }
     	    	<span id={"serviceid_"+service.id.is.toString}>Zmiany</span></li>   	    
     	})
+    }
+    
+    def addService() = {
+        var serviceId = ""
+        var orderId = ""
+        var serviceKind = ""
+        var amountGB = ""
+        var amountTime = ""
+        val offers = OfferType.findAll.map(o => (o.id.is.toString, o.name.is))
+        
+         def saveOrder() = {
+            // order 0  nie ma jeszcze zamówienia
+            // service 0 nie istnieje jeszcze usługa
+            //jak mam service to nie potrzebuje serviceKind
+              Order.find(orderId) match {
+        	        case  Full(order) => {
+        	            
+        	        } 
+        	        case _ => {
+        	            
+        	        }
+        	    }
+            
+  
+        	Alert("Zapisano")
+        }
+        val form =  "#serviceId" #> SHtml.text(serviceId, serviceId = _) &
+         "#orderId" #> SHtml.text(orderId,  orderId = _) &
+        "#serviceKind" #> SHtml.select(offers, Full(serviceKind), serviceKind = _) & 
+        "#amountGB" #> SHtml.text(amountGB, amountGB = _) &
+        "#amountTime" #> SHtml.text(amountTime, amountTime = _) &
+        "#saveOrder" #> SHtml.ajaxSubmit("Zapisz", saveOrder) andThen SHtml.makeFormsAjax
+        
+        "form" #> (in => form(in))
     }
 
 }

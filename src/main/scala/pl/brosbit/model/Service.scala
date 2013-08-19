@@ -7,7 +7,9 @@ import _root_.net.liftweb.common._
 class Service extends LongKeyedMapper[Service] with IdPK {
     def getSingleton = Service
     //object owncloud extends MappedString(this, 45)????????????
-    object idOffer extends MappedLongForeignKey(this, OfferType)
+    object idOffer extends MappedLongForeignKey(this, OfferType) {
+    	override def dbNotNull_? = true
+    }
     object idUser extends MappedLongForeignKey(this, User)
     object begin extends MappedDate(this)
     object end extends MappedDate(this)
