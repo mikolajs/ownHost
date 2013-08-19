@@ -1,6 +1,39 @@
 <div class="lift:surround?with=default;at=content">
  <head_merge> 
- 
+  <script>
+$(function() {
+$( "#sliderGB" ).slider({
+value:25,
+min: 25,
+max: 250,
+step: 25,
+slide: function( event, ui ) {
+$( "#amountGB" ).val(  ui.value );
+$( "#amountGBInfo" ).text(  ui.value  );
+}
+});
+var val =  $( "#sliderGB" ).slider( "value" );
+$( "#amountGB" ).val( val );
+$( "#amountGBInfo" ).text( val );
+});
+
+$(function() {
+$( "#sliderTime" ).slider({
+value:3,
+min: 3,
+max: 24,
+step: 3,
+slide: function( event, ui ) {
+$( "#amountTime" ).val(  ui.value );
+$( "#amountTimeInfo" ).text(  ui.value);
+}
+});
+var val = $( "#sliderTime" ).slider( "value" );
+$( "#amountTime" ).val( val );
+$( "#amountTimeInfo" ).text( val );
+});
+
+</script>
  </head_merge>
          
                         	
@@ -9,19 +42,40 @@
 <h2><a>Twoje dane:</a></h2>
 
 <form class="lift:MainSn.userData" method="POST">
-<label>Imię:</label><input id="firstName"/>
-<label>Nazwisko:</label><input id="lastName" />
-<label>Adres e-mail:</label><input id="email" />
-<label>Telefon:</label><input id="phone"/>
-<label>Ulica:</label><input id="street" />
-<label>Nr domu i mieszkania:</label><input id="house" />
+<label>Imię:</label><input id="firstName"/><br/>
+<label>Nazwisko:</label><input id="lastName" /><br/>
+<label>Adres e-mail:</label><input id="email" /><br/>
+<label>Telefon:</label><input id="phone"/><br/>
+<label>Ulica:</label><input id="street" /><br/>
+<label>Nr domu i mieszkania:</label><input id="house" /><br/>
 <label>Miasto:</label><input id="city" />
-<label>Kod pocztowy:</label><input id="zipCode" />
-<input id="saveUser" />
+<label>Kod pocztowy:</label><input id="zipCode" /><br/>
+<input id="saveUser" /><br/>
 </form>
 </article>
 	
 <article >
+
+<h2><a>Twoje usługi:</a></h2>
+
+<ul  class="lift:MainSn.servicesData"  id="services">
+<li></li>
+</ul>
+
+<div id="flyingForm">
+<form> 
+<p><input id="serviceId" /></p>
+<label for="serviceKind">Usługa</label><select id="serviceKind"></select>
+<input id="amountGB"  />
+<h3>Pojemność konta: <span id="amountGBInfo"></span> GB</h3>
+<div id="sliderGB"></div>
+<h3>Okres ważności: <span id="amountTimeInfo"></span> M-cy</h3>
+<input id="amountTime" />
+<div id="sliderTime"></div>
+<input id="saveService" /><input id="cancel"  type="submit" value="Anuluj" />
+</form>
+</div>
+</article>
 
 <h2><a>Dane Twojej firmy:</a></h2>
 

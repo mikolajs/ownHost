@@ -7,7 +7,7 @@ import _root_.net.liftweb.common._
 
 class Company extends LongKeyedMapper[Company] with IdPK {
   def getSingleton = Company
-
+  
   object name extends MappedString(this, 45) {
     override def displayName = "Nazwa firmy"
   }
@@ -24,18 +24,15 @@ class Company extends LongKeyedMapper[Company] with IdPK {
     override def displayName = "Miasto"
   }
   object nip extends MappedString(this, 45) {
-     def validateNameMinLength(nip : String) = {
-      if (nip.length < 10) {
-    	  List(FieldError(this, "Name too short, dude!"))
-      } else {
-        List[FieldError]()
-      }
-    }
+      
+     override def validations =  Validations.validateNameMinLength(this) _ :: Nil
     override def displayName = "NIP"
   }
   object phone extends MappedString(this, 45){
-    override def displayName = "Telofon"
+    override def displayName = "Telefon"
   }
+  
+  
 
 }
 

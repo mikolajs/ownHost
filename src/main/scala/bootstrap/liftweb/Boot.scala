@@ -39,7 +39,7 @@ class Boot {
 
         DB.defineConnectionManager(DefaultConnectionIdentifier, DBVendor)
 
-        Schemifier.schemify(true, Schemifier.infoF _, User, Period, Company, Offer, Service)
+        Schemifier.schemify(true, Schemifier.infoF _, User, Company, OfferType, Service, Order)
 
         LiftRules.addToPackages("pl.brosbit")
         
@@ -55,11 +55,7 @@ class Boot {
         
         val entries = List(
             Menu("Główna") / "index" >> loggedIn,
-            Menu("Edycja Admin") / "adm" / "admin" >> isSuperUser,
-            Menu("Firma") / "adm" / "company" >> isSuperUser,
-            Menu("Oferta") / "adm" / "offer" >> isSuperUser,
-            Menu("Klient") / "adm" / "client" >> isSuperUser,
-            Menu("Usługa") / "adm" / "service" >> isSuperUser
+            Menu("Administracja") / "admin"
         ) :::  (User.sitemap)
             
         LiftRules.setSiteMap(SiteMap(entries: _*))
