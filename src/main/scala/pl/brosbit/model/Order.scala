@@ -6,8 +6,8 @@ import _root_.net.liftweb.common._
 
 class Order extends LongKeyedMapper[Order] with CreatedUpdated with IdPK {
     def getSingleton = Order
-    object user  extends MappedString(this, 45)
-    object offer extends MappedString(this, 45)
+    object idUser  extends MappedLongForeignKey(this, User)
+    object idOffer extends MappedLongForeignKey(this, OfferType)
     object isNew extends MappedBoolean(this)
     object idService extends MappedLongForeignKey(this, Service)
     object addMonth extends MappedInt(this)

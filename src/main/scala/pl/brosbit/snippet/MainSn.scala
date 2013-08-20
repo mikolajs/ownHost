@@ -71,10 +71,17 @@ class MainSn {
 
     def servicesData() = {
     	val services = Service.findAll(By(Service.idUser, user.id.is))
-    	"#services" #> services.map(service => {
+    	
+    	"#serviceCont" #> services.map(service => {
     	    val offer = service.idOffer.obj.openOrThrowException("No offert in service!")
-    	    "li" #> <li>{"%s  - pojemność %d GB - termin wygaśnięcia:  ".format(offer.name.is, service.capacity.is,  service.getExpiredTime) }
-    	    	<span id={"serviceid_"+service.id.is.toString}>Zmiany</span></li>   	    
+    	    "h4 *" #> offer.name.is & 
+    	    "h4[id]" #> ("serviceId_" + service.id.is.toString) &
+    	    ".serviceInfo *" #> (if (service.isActive.is) {<p> Pojemność: <span class="amountGB">{service.capacity.is.toString}</span> GB  <br/> 
+    	    			Aktywna do: <span class="amountTime">{service.end.is.toString}</span></p>}
+    	    									else <p>Usługa nieaktywna</p>) &
+    	    ".serviceOrder *" #> ( if(service.newOrder.is) <p><span class="amountGBtoAdd">{service.addGB.is.toString}</span>
+    	    																								<span class="amountTimetoAdd">{service.addMonth.is.toString}</span></p>
+    	    										else <p><button onclick="changeService(this)">Przedłuż/Zmień usługę</button></p>)
     	})
     }
     
@@ -111,6 +118,13 @@ class MainSn {
         
         "form" #> (in => form(in))
     }
-
+    
+    def offerTypesJSON() = {
+        val offers = OfferType.findAll.map(  o => {
+            "{'id':"  + o.id.is.toString + " , 'gb':" + o.unitGB.is.toString + ", 'time':" + o.unitMonth.is.toString + "}"   })
+        
+        "script" #> <script>var offerTypes = [ {offers.mkString(",")} ]</script>
+    }
+    
 }
 

@@ -1,38 +1,8 @@
 <div class="lift:surround?with=default;at=content">
  <head_merge> 
-  <script>
-$(function() {
-$( "#sliderGB" ).slider({
-value:25,
-min: 25,
-max: 250,
-step: 25,
-slide: function( event, ui ) {
-$( "#amountGB" ).val(  ui.value );
-$( "#amountGBInfo" ).text(  ui.value  );
-}
-});
-var val =  $( "#sliderGB" ).slider( "value" );
-$( "#amountGB" ).val( val );
-$( "#amountGBInfo" ).text( val );
-});
-
-$(function() {
-$( "#sliderTime" ).slider({
-value:3,
-min: 3,
-max: 24,
-step: 3,
-slide: function( event, ui ) {
-$( "#amountTime" ).val(  ui.value );
-$( "#amountTimeInfo" ).text(  ui.value);
-}
-});
-var val = $( "#sliderTime" ).slider( "value" );
-$( "#amountTime" ).val( val );
-$( "#amountTimeInfo" ).text( val );
-});
-
+  <script src="/js/main.js"></script>
+<script  class="lift:MainSn.offerTypesJSON">
+var offerTypes = [{'id':'1', 'gb':'5', 'time':'3'} ];
 </script>
  </head_merge>
          
@@ -58,14 +28,30 @@ $( "#amountTimeInfo" ).text( val );
 
 <h2><a>Twoje usługi:</a></h2>
 
-<ul  class="lift:MainSn.servicesData"  id="services">
-<li></li>
-</ul>
+<div  class="MainSn.servicesData"  id="services">
+<div class="serviceCont row">
+<h4>Brak aktywnych usług</h4>
+<div class="serviceInfo"></div>
+<div class="serviceOrder"> <p> </div>
+</div>
+<div class="addNewService"><button onclick="addNewService()">Dodaj nową usługę</button></div>
+</div>
+</article>
+
+
+<article>
+
+<h2><a>Dane Twojej firmy:</a></h2>
+
+<form  class="lift:MainSn.companyData"  method="POST">
+<input ><p id="nameComp"></p></input>
+</form>
+</article>
 
 <div id="flyingForm">
 <form class="lift:MainSn.addService"  method="POST'" > 
-<p><input id="serviceId"  style="display:none" /><input id="orderId"  style="display:none"  /></p>
-<label for="serviceKind">Usługa</label><select id="serviceKind"></select>
+<p><input id="serviceId"  style="display:none" /></p>
+<label for="serviceKind">Usługa</label><select id="serviceKind"  onchange="onchangeOfferType()"></select>
 <input id="amountGB"  style="display:none"   />
 <h3>Pojemność konta: <span id="amountGBInfo"></span> GB</h3>
 <div id="sliderGB"></div>
@@ -75,15 +61,6 @@ $( "#amountTimeInfo" ).text( val );
 <input id="saveOrder"    /><input id="cancel"  type="submit" value="Anuluj" />
 </form>
 </div>
-</article>
-
-<h2><a>Dane Twojej firmy:</a></h2>
-
-<form  class="lift:MainSn.companyData"  method="POST">
-<input ><p id="nameComp"></p></input>
-</form>
-</article>
-
 
 <footer class="art-footer">
 
