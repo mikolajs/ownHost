@@ -11,7 +11,8 @@ import java.util.Date
 import Helpers._
 import pl.brosbit.model._
 
-import net.liftweb.http.js.JsCmds.{ SetHtml, Alert, Run }
+import net.liftweb.http.js.JsCmds.{ SetHtml, Alert, Run}
+import net.liftweb.http.js.JE.{JsFunc, JsNull}
 
 class MainSn {
 
@@ -71,59 +72,88 @@ class MainSn {
 
     def servicesData() = {
     	val services = Service.findAll(By(Service.idUser, user.id.is))
-    	
+    	val now = new Date()
     	"#serviceCont" #> services.map(service => {
     	    val offer = service.idOffer.obj.openOrThrowException("No offert in service!")
+    	    val isActive = now.before(service.end.is)
     	    "h4 *" #> offer.name.is & 
     	    "h4[id]" #> ("serviceId_" + service.id.is.toString) &
-    	    ".serviceInfo *" #> (if (service.isActive.is) {<p> Pojemność: <span class="amountGB">{service.capacity.is.toString}</span> GB  <br/> 
+    	    ".serviceInfo *" #> (if (isActive) {<p> Pojemność: <span class="amountGB">{service.capacity.is.toString}</span> GB  <br/> 
     	    			Aktywna do: <span class="amountTime">{service.end.is.toString}</span></p>}
     	    									else <p>Usługa nieaktywna</p>) &
-    	    ".serviceOrder *" #> ( if(service.newOrder.is) <p><span class="amountGBtoAdd">{service.addGB.is.toString}</span>
-    	    																								<span class="amountTimetoAdd">{service.addMonth.is.toString}</span></p>
-    	    										else <p><button onclick="changeService(this)">Przedłuż/Zmień usługę</button></p>)
+    	    ".serviceOrder *" #> ( if(service.newOrder.is) { <p><span class="amountGBtoAdd">{service.addGB.is.toString}</span>
+    	    																								<span class="amountTimetoAdd">{service.addMonth.is.toString}</span> 
+    	    																								</p> ++ <button onclick="changeService(this)">Przedłuż/Zmień usługę</button> }
+    	    										else <button onclick="changeService(this)">Przedłuż/Zmień usługę</button>)
     	})
     }
     
     def addService() = {
         var serviceId = ""
-        var orderId = ""
         var serviceKind = ""
         var amountGB = ""
         var amountTime = ""
+      
         val offers = OfferType.findAll.map(o => (o.id.is.toString, o.name.is))
         
-         def saveOrder() = {
-            // order 0  nie ma jeszcze zamówienia
-            // service 0 nie istnieje jeszcze usługa
-            //jak mam service to nie potrzebuje serviceKind
-              Order.find(orderId) match {
-        	        case  Full(order) => {
-        	            
+         def saveService() = {
+             	Service.find(serviceId)  match {
+        	        case  Full(service) => {
+        	            service.newOrder(true).addGB(tryo(amountGB.toInt).openOr(0)).addMonth(tryo(amountTime.toInt).openOr(0)).save
+        	            JsFunc("affterAdd", service.id.toString).cmd
         	        } 
         	        case _ => {
-        	            
+        	            val service = Service.create
+        	            var offerType = OfferType.find(tryo(serviceKind.toLong).openOr(1)).openOr(OfferType.findAll.head)
+        	            service.idOffer(offerType.id.is).newOrder(true).idUser(user.id.is).
+        	            	addGB(tryo(amountGB.toInt).openOr(0)).addMonth(tryo(amountTime.toInt).openOr(0)).save
+        	            	JsFunc("affterAdd", service.id.toString).cmd
         	        }
         	    }
-            
-  
-        	Alert("Zapisano")
         }
+        
+        
+        def deleteService() = {
+            	Service.find(serviceId)  match {
+            	    case Full(service) => {
+            	        if(service.idUser.is != user.id.is) {
+            	            Alert("Próbujesz usunąć nie swoją usługę!")
+            	        }
+            	        else service.newOrder(false).addMonth(0).addGB(0).save
+            	        JsFunc("affterDelete", service.id.is.toString).cmd
+            	    }
+            	    case _ => JsNull.cmd
+            	}
+        }
+        
         val form =  "#serviceId" #> SHtml.text(serviceId, serviceId = _) &
-         "#orderId" #> SHtml.text(orderId,  orderId = _) &
         "#serviceKind" #> SHtml.select(offers, Full(serviceKind), serviceKind = _) & 
         "#amountGB" #> SHtml.text(amountGB, amountGB = _) &
         "#amountTime" #> SHtml.text(amountTime, amountTime = _) &
-        "#saveOrder" #> SHtml.ajaxSubmit("Zapisz", saveOrder) andThen SHtml.makeFormsAjax
+        "#deleteOrder" #> SHtml.ajaxSubmit("Usuń",deleteService) &
+        "#saveOrder" #> SHtml.ajaxSubmit("Zapisz", saveService) andThen SHtml.makeFormsAjax
         
         "form" #> (in => form(in))
     }
     
     def offerTypesJSON() = {
         val offers = OfferType.findAll.map(  o => {
-            "{'id':"  + o.id.is.toString + " , 'gb':" + o.unitGB.is.toString + ", 'time':" + o.unitMonth.is.toString + "}"   })
+            "{'id':"  + o.id.is.toString + " , 'gb':" + o.unitGB.is.toString + ", 'time':" + o.unitMonth.is.toString  + " }"   })
         
         "script" #> <script>var offerTypes = [ {offers.mkString(",")} ]</script>
+    }
+    
+    def sendMassage() = {
+        var message = ""
+        
+         def saveMessage() = {
+            Alert("Funkcjonalność niezaimplementowana")
+        }
+        
+        val form = "#messageContent" #> SHtml.textarea(message, message = _) &
+        "#saveMessage" #> SHtml.ajaxSubmit("Wyślij", saveMessage) andThen SHtml.makeFormsAjax
+        
+        "#messageForm" #> (in => form(in))
     }
     
 }

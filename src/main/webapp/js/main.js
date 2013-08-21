@@ -41,7 +41,9 @@ $(function() {
 
 function addNewService(){
 	var $form = $('#flyingForm');
+	$('#serviceKind').show();
 	$form.dialog( "option", "title", "Zamów usłlugę" );
+	
 	$form.dialog('open');
 	$('#flyingForm').children('form').get(0).reset();
 	onchangeOfferType();
@@ -51,7 +53,7 @@ function changeService(elem){
 	var $form = $('#flyingForm');
 	$form.dialog('open');
 	form.dialog( "option", "title", "Zmień usługę" );
-	
+	$('#serviceKind').hide();
 	var $elem = $(elem).parent();
 	var amountGB = 0;
 	var amountTime = 0;
@@ -71,17 +73,36 @@ function changeService(elem){
     $('#serviceId').val(idSer);
 }
 
-function affterAdd(array){
-	var idService = array[0];
-	var amountGB = array[1];
-	var amountTime = array[2];
-	
-	var j = searchServiceIdInArray(idService);
-	if(j.id == -1) { //nowa usługa
-		
-	} else { //stara usługa
-		
+function affterAdd(idService){
+	var offerName = $('#serviceKind option:selected').html();
+	var amountGB = $('#amountGB').val();
+	var amountTime = $('#amountTime').val();
+	var serviceIdCont = 'seriviceId_' + idService;
+	var $serviceH4 = $('#'+serviceId);
+	if($serviceH4.length < 1) {
+		var entryService = '<div class="serviceCont row" > \
+			<h4 id=" '+ serviceIdCont + '">' + offerName + '</h4> \
+			<div class="serviceInfo"><p>Usługa nieaktywna</p></div> \
+	<div class="serviceOrder"><p><span class="amountGBtoAdd">'  + amountGB + '</span> GB \
+			<span class="amountTimetoAdd">' + amountTime + '</span> \
+			M-cy </p><button onclick="changeService(this)">Przedłuż/Zmień usługę</button></div> \
+	</div>';
+		$sddServices = $('#services').children('.addNewService"');
+		$(entryService).insertBefore($addServices);
 	}
+	else {
+		var pElem = '<p><span class="amountGBtoAdd">'  + amountGB + '</span> GB \
+		<span class="amountTimetoAdd">' + amountTime + '</span> \
+		M-cy </p>'
+		$serviceButton = $serviceH4.parent().children('div').children();
+		$(pElem).insertBefore($serviceButton);
+	}
+	
+}
+
+function affterDelete(idService){
+	var serviceIdCont = 'seriviceId_' + idService;
+	$('#'+serviceId).parent().children('.serviceOrder').children('p').remove();
 }
 
 function onchangeOfferType(){
@@ -123,7 +144,7 @@ function setSliderValue(GB, time) {
 function searchServiceIdInArray(id){
 	for (i in offerTypes) {
 		if(offerTypes[i].id == id){
-			return offerypes[i];
+			return offerTypes[i];
 		}
 	}
 	var j = {};

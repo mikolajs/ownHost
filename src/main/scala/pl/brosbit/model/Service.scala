@@ -1,5 +1,6 @@
 package pl.brosbit.model
 
+import java.util.Date
 import net.liftweb.mapper._
 import _root_.net.liftweb.util._
 import _root_.net.liftweb.common._
@@ -11,10 +12,13 @@ class Service extends LongKeyedMapper[Service] with IdPK {
     	override def dbNotNull_? = true
     }
     object idUser extends MappedLongForeignKey(this, User)
-    object begin extends MappedDate(this)
-    object end extends MappedDate(this)
-    object capacity extends MappedInt(this)
-    object isActive extends MappedBoolean(this)
+    object begin extends MappedDate(this) {
+        override def defaultValue = new Date()
+    }
+    object end extends MappedDate(this){
+        override def defaultValue = new Date()
+    }
+    object capacity extends MappedInt(this)  
     object newOrder extends MappedBoolean(this)
     object addMonth extends MappedInt(this)
     object addGB extends MappedInt(this)

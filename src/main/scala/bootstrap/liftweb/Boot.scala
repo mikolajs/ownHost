@@ -39,7 +39,7 @@ class Boot {
 
         DB.defineConnectionManager(DefaultConnectionIdentifier, DBVendor)
 
-        Schemifier.schemify(true, Schemifier.infoF _, User, Company, OfferType, Service, Order)
+        Schemifier.schemify(true, Schemifier.infoF _, User, Company, OfferType, Service, OrderDone)
 
         LiftRules.addToPackages("pl.brosbit")
         

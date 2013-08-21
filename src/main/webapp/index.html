@@ -48,6 +48,14 @@ var offerTypes = [{'id':'1', 'gb':'5', 'time':'3'} ];
 </form>
 </article>
 
+<article>
+<h2>Kontakt z administratorem</h2>
+<form class="lift:MainSn.sendMassage" method="POST"  id="messageForm">
+<p><label for="messageContent">Treść</label><textarea id="messageContent"></textarea></p>
+<p><input id="saveMessage"/></p>
+</form>
+</article>
+
 <div id="flyingForm">
 <form class="lift:MainSn.addService"  method="POST'" > 
 <p><input id="serviceId"  style="display:none" /></p>
@@ -58,7 +66,7 @@ var offerTypes = [{'id':'1', 'gb':'5', 'time':'3'} ];
 <h3>Okres ważności: <span id="amountTimeInfo"></span> M-cy</h3>
 <input id="amountTime"  style="display:none" />
 <div id="sliderTime"></div>
-<input id="saveOrder"    /><input id="cancel"  type="submit" value="Anuluj" />
+<input id="saveOrder"    /><input id="cancel"  type="submit" value="Anuluj" /><input id="deleteOrder"    />
 </form>
 </div>
 
