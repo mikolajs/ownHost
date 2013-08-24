@@ -55,10 +55,18 @@ class Boot {
         
         val entries = List(
             Menu("Główna") / "index" >> loggedIn,
-            Menu("Administracja") / "admin"
+            Menu("Administracja") / "admin",
+            Menu("Użytkownik") / "user"
         ) :::  (User.sitemap)
             
         LiftRules.setSiteMap(SiteMap(entries: _*))
+        
+         LiftRules.statelessRewrite.prepend(NamedPF("ClassRewrite") {
+      case RewriteRequest(
+        ParsePath( "user" :: idUser :: Nil, _, _, _), _, _) =>
+        RewriteResponse(
+         "user" :: Nil, Map("id" -> idUser))
+    })
 
         LiftRules.htmlProperties.default.set((r: Req) =>
             new Html5Properties(r.userAgent))

@@ -1,88 +1,28 @@
 <div class="lift:surround?with=default;at=content">
  <head_merge>
-          <script type="text/javascript" src="/jquery/mytables.js"></script>
           <script type="text/javascript" src="/js/jquery.tablesorter.js"></script> 
           <link rel="stylesheet" href="/blue/style.css" type="text/css" media="print, projection, screen" />
+          <script type="text/javascript" src="/js/dejavu.js"></script>
+        <script type="text/javascript" src="/js/admin.js"></script>
         <script>
+        var offerEditor = new Object();
         $(document).ready(function(){
-            $("#OfferTable").tablesorter(); 
-            $("#users").tablesorter(); 
-        });
-       function clearForm() {
-            document.getElementById('offerTypeEdit').reset();
-            return false;
-        }
-        function setData(elem) {
-            var $elem = $(elem);
-            document.getElementById('id').value = $elem.attr('id');
-            var eleTd = $elem.children('td').first();
-            document.getElementById('name').value = eleTd.text();
-        }
-        function validateForm() {
-            var name = $('#name');
-            name.val(jQuery.trim(name.val()));
-            if(name.val().length < 2){
-            	$('#notice').text("* Brak nazwy lub nazwa zbyt krótka");
-            	return false;
-            } 
-            else return true;
-        }
+            offerEditor = new OfferEditor();
+            
+            $('#services').children('tbody tr').each(function(){
+           	 $this = $(this);
+           	var idUser = $this.attr('id').substring(8);
+           	var url = document.window.location.hostname + "/user/" + idUser;
+           	document.window.open("","_blank","menubar=no;status=no;titlebar=no;toolbar=no;width=600;height=600;", false );
+            });
+           });
         
-        function savedOffer(id){
-        	var $row = $('#rowid_' + id);
-        	
-        	var html = '<tr id=rowid_"'+ id + '" onclick="insertToForm(this)"> \
-    		<td>' + $('#name').val() + '</td><td>' + $('#description').val()  +'</td><td>'  + $('#unitPrice').val()  + '</td> \
-    		<td>' + $('#unitM').val() + '</td><td>'  + $('#unitGB').val() + '</td></tr>';
-    		
-        	if($row) {
-        		$row.replaceWith(html);     		
-        	} 
-        	else {
-        		$("#OfferTable tbody").append(html);
-        	}
-        	
-        	 
-            $("#OfferTable").trigger("update"); 
-            document.getElementById('offerTypeEdit').reset();
-        }
-        
-        function insertToForm(elem) {
-        	$row = $(elem);
-        	var id = $row.attr('id').substr(6);
-        	$('#idOffer').val(id);
-        	$row.children('td').each(function(index){
-        		switch (index) {
-        		case 0: 
-        			$('#name').val(this.innerHTML);
-        			break;
-        		case 1: 
-        			$('#description').val(this.innerHTML);
-        			break;
-        		case 2: 
-        			$('#unitPrice').val(this.innerHTML);
-        			break;
-        		case 3: 
-        			$('#unitM').val(this.innerHTML);
-        			break;
-        		case 4: 
-        			$('#unitGB').val(this.innerHTML);
-        			break;
-        		default:
-        			break;
-        		}
-        	});
-        	
-        }
         </script>
-        
         
     </head_merge>
 
 <div class="">
-  <div class="">
-Menu
-</div>
+
 
 <div class="">
 <article>
@@ -92,68 +32,51 @@ Menu
 <tbody class="lift:AdminSn.offerTypes"><tr><td></td><td></td><td></td><td></td><td></td></tr></tbody>
 <tfoot><tr><th>Nazwa</th><th>Opis</th><th>Cena jednostkowa</th><th>Jednostka M-ce </th><th>Jednostka GB</th></tr></foot>
 </table>
-
-<form class="lift:AdminSn.offerTypeEdit" method="POST" id="offerTypeEdit" >
-<fieldset><legend>Edycja oferty</legend>
+<div id="fyingFormOffer">
+<form class="lift:AdminSn.offerTypeEdit" method="POST" id="offerTypeEdit"  titl >
 <p><label for="idOffer">ID:</label><input id="idOffer"  readonly="readonly" /></p>
 <p><label for="name">Nazwa: </label><input id="name" /></p>
 <p><label for="description">Opis:</label><textarea id="description" ></textarea></p>
  <p><label for="unitPrice">Cena: </label><input id="unitPrice" /> zł</p>
  <p><label for="unitM">Okres: </label><input id="unitM" /> m-c(e/y)</p>
   <p><label for="unitGB">Pojemność: </label><input id="unitGB" /> GB</p>
-<p><input id="saveOffer" /><input id="deleteOffer" /><input type="submit" onclick="return clearForm()" value="Czyść!" /> </p>
+<p><input id="saveOffer" /><input id="deleteOffer" /> </p>
 <p id="notice"></p>
 </fieldset>
 </form>
- <p></p>
+</div>
+<button onclick="offerEditor.addNewOffer()">Dodaj ofertę</button>
 </article>
 
 <article>
-<h2>Użytkownicy</h2>
-<table id="users" class="tablesorter">
-<thead><tr><th>Imię</th><th>Nazwisko</th><th>Koniec usługi</th><th>Usługi oczekujące</th><th>Szczególy</th></tr></thead>
-<tbody class=":AdminSn."><tr><td></td><td></td><td></td><td></td><td></td></tr></tbody>
-<tfoot><tr><th>Imię</th><th>Nazwisko</th><th>Koniec usługi</th><th>Usługi oczekujące</th><th>Szczególy</th></tr></foot>
+<h2>Usługi</h2>
+<table id="services" class="tablesorter">
+<thead><tr><th>Data zakończenia</th><th>Zamówiona?</th><th>Klient</th></tr></thead>
+<tbody class="lift:AdminSn.servicesInfo"><tr><td></td><td></td><td></td></tr></tbody>
+<tfoot><tr><th>Data zakończenia</th><th>Zamówiona?</th><th>Klient</th></tr></foot>
 </table>
 </article>
 
-<article>
-<h2>Włączone powiadomienia</h2>
-* kończąca się usługa - użytkownik
-* zmiany zatwierdzone w usługach - użytkownik
-* raport o wydarzeniach - administrator
-</article>
-
-<div id="flyingForm1">
-<article>
-<h2> Dane użytkownika</h2>
-<div class="AdminSn"><p></p></div>
-</article>
-
-<article>
-<h2> Dane firmy</h2>
-<div class="AdminSn"><p></p></div>
-</article>
-
-<article>
-<h2> Lista usług</h2>
-<div class="AdminSn"><p></p></div>
-</article>
-
-<article>
-<h2> Wyślij wiadomość</h2>
-<div class="AdminSn"><p></p></div>
-</article>
-
+<!-- 
+<article >
+<h2>Włączone powiadomienia użytkownka</h2>
+<table id="users" class="tablesorter">
+<thead><tr><th>Rodzaj</th><th>Czas</th><th>Wiadomość</th></tr></thead>
+<tbody class=":AdminSn."><tr><td></td><td></td><td></td></tr></tbody>
+<tfoot><tr><th>Rodzaj</th><th>Czas</th><th>Wiadomość</th></tr></foot>
+</table>
+<div>
+<form>
+<p><label>Kończąca się usługa</label><input type="checkbox" />
+<label>Zatwierdzono zmianę</label><input type="checkbox" /></p>
+<p><label>Czas:</label><select id="timeNotyfication"></select> dni</p>
+<p><label>Wiadomość</label><textarea rows="" cols=""></textarea></p>
+<p><input value="Zapisz" type="submit" /><input value="Zapisz" type="submit" /><input value="Zapisz" type="submit" /></p>
+</form>
 </div>
-
-<div id="flyingForm2">
-<article>
-<h2> Ostatnio zatwierdzone</h2>
-<div class="AdminSn"><p></p></div>
 </article>
-
-</div>
+ -->
+ 
 
 </div>
 </div>

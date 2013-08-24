@@ -1,0 +1,35 @@
+
+<div class="lift:surround?with=default;at=content">
+ <head_merge>
+          <script type="text/javascript" src="/js/jquery.tablesorter.js"></script> 
+          <link rel="stylesheet" href="/blue/style.css" type="text/css" media="print, projection, screen" />
+          <script type="text/javascript" src="/js/dejavu.js"></script>
+        <script type="text/javascript" src="/js/adminusers.js"></script>
+        
+        
+    </head_merge>
+
+<article>
+<h2> Dane użytkownika</h2>
+<div class="lift:UsersSn.userData"><table><tr></tr></table></div>
+</article>
+
+<article>
+<h2> Dane firmy</h2>
+<div class="lift:UsersSn.companyData"><table><tr></tr></table></div>
+</article>
+
+<article>
+<h2> Lista usług</h2>
+<div class="lift:UsersSn.servicesList"><table><tr></tr></table></div>
+</article>
+
+<article>
+<h2> Wyślij wiadomość</h2>
+<div ><form class="lift:UsersSn.sendMassage" method="POST"  id="messageForm">
+<p><label for="messageContent">Treść</label><textarea id="messageContent"></textarea></p>
+<p><input id="saveMessage"/></p>
+</form></div>
+</article>
+
+</div>

@@ -20,7 +20,7 @@ class AdminSn {
     def offerTypes() = {
         val offers = OfferType.findAll()
         "tr" #> offers.map(offer => {
-            <tr id={"rowid_"+ offer.id.is.toString } onclick="insertToForm(this)"  >
+            <tr id={"rowid_"+ offer.id.is.toString } onclick="offerEditor.insertToForm(this)"  >
                 <td>{ offer.name.is }</td><td>{ offer.description.is }</td><td>{ offer.unitPrice.is.toString }</td>
                 <td>{ offer.unitMonth.is.toString }</td><td>{ offer.unitGB.is.toString }</td>
             </tr>
@@ -63,5 +63,17 @@ class AdminSn {
             "form" #> (in =>  form(in) )
 
     }
-
+    
+    def servicesInfo() = {
+        val users = User.findAll(By(User.superUser, false))
+        val services = Service.findAll
+       
+             "tr" #>  services.map(service =>{
+            val user = users.find(u => u.id.is == service.id.is).getOrElse(User.create)
+            <tr id={"userid_" + user.id.is.toString}><td>{service.end.is.toString}</td><td>{if(service.newOrder.is) "Tak" else "Nie"}</td>
+        		<td>{user.getFullName}</td></tr>
+        })     
+    }
+    
+   
 }

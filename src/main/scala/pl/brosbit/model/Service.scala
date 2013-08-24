@@ -19,9 +19,15 @@ class Service extends LongKeyedMapper[Service] with IdPK {
         override def defaultValue = new Date()
     }
     object capacity extends MappedInt(this)  
-    object newOrder extends MappedBoolean(this)
-    object addMonth extends MappedInt(this)
-    object addGB extends MappedInt(this)
+    object newOrder extends MappedBoolean(this) {
+        override def defaultValue = true
+    }
+    object addMonth extends MappedInt(this) {
+        override def defaultValue = 0
+    }
+    object addGB extends MappedInt(this) {
+        override def defaultValue = 0
+    }
     def getExpiredTime = end.is.toString
     
 }
